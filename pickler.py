@@ -26,6 +26,8 @@ def get_connection():
 def query_data():
     sql_query = request.json.get('sql')  # Get the SQL query from the request body
     
+    print(request.json)
+
     if not sql_query:
         return jsonify({"error": "No SQL query provided"}), 400  # Error Handler
     
