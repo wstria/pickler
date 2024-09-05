@@ -1,0 +1,52 @@
+2024-09-04 15:28:47,801 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.72.142:5000
+2024-09-04 15:28:47,803 - INFO - [33mPress CTRL+C to quit[0m
+2024-09-04 15:28:47,803 - INFO -  * Restarting with stat
+2024-09-04 15:28:48,203 - WARNING -  * Debugger is active!
+2024-09-04 15:28:48,222 - INFO -  * Debugger PIN: 545-599-218
+2024-09-04 15:29:04,854 - INFO - Authenticated API key: 27f22b8b6eef9508133b82e34f3ca60d680b3152a2c5c9fa35f69546aed3bb85
+2024-09-04 15:29:04,863 - INFO - Executing query: Select * From GL_MASTER_MC - API key: 27f22b8b6eef9508133b82e34f3ca60d680b3152a2c5c9fa35f69546aed3bb85
+2024-09-04 15:29:05,633 - INFO - Query executed successfully: Select * From GL_MASTER_MC - API key: 27f22b8b6eef9508133b82e34f3ca60d680b3152a2c5c9fa35f69546aed3bb85
+2024-09-04 15:29:05,643 - INFO - 192.168.72.142 - - [04/Sep/2024 15:29:05] "POST /query HTTP/1.1" 200 -
+2024-09-04 16:29:53,129 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.72.142:5000
+2024-09-04 16:29:53,129 - INFO - [33mPress CTRL+C to quit[0m
+2024-09-04 16:29:53,129 - INFO -  * Restarting with stat
+2024-09-04 16:29:53,572 - WARNING -  * Debugger is active!
+2024-09-04 16:29:53,588 - INFO -  * Debugger PIN: 545-599-218
+2024-09-04 16:30:03,843 - INFO - 192.168.72.142 - - [04/Sep/2024 16:30:03] "[35m[1mPOST /query HTTP/1.1[0m" 500 -
+2024-09-04 16:33:09,249 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.72.142:5000
+2024-09-04 16:33:09,249 - INFO - [33mPress CTRL+C to quit[0m
+2024-09-04 16:33:09,249 - INFO -  * Restarting with stat
+2024-09-04 16:33:09,697 - WARNING -  * Debugger is active!
+2024-09-04 16:33:09,712 - INFO -  * Debugger PIN: 545-599-218
+2024-09-04 16:33:22,223 - INFO - Authenticated API key: 27f22b8b6eef9508133b82e34f3ca60d680b3152a2c5c9fa35f69546aed3bb85
+2024-09-04 16:33:22,223 - INFO - Executing batch queries - API key: 27f22b8b6eef9508133b82e34f3ca60d680b3152a2c5c9fa35f69546aed3bb85
+2024-09-04 16:33:22,679 - INFO - Executing query: SELECT * FROM GL_MASTER_MC - API key: 27f22b8b6eef9508133b82e34f3ca60d680b3152a2c5c9fa35f69546aed3bb85
+2024-09-04 16:33:22,862 - INFO - Executing query: SELECT * FROM GL_MASTER_COST_CENTERS_MC > 100 - API key: 27f22b8b6eef9508133b82e34f3ca60d680b3152a2c5c9fa35f69546aed3bb85
+2024-09-04 16:33:22,934 - INFO - 192.168.72.142 - - [04/Sep/2024 16:33:22] "[35m[1mPOST /query HTTP/1.1[0m" 500 -
+2024-09-04 16:36:03,639 - INFO -  * Detected change in 'C:\\Users\\ipreciado\\workpy\\Spectrum DataEngine\\pickler.py', reloading
+2024-09-04 16:36:03,705 - INFO -  * Restarting with stat
+2024-09-04 16:36:04,175 - WARNING -  * Debugger is active!
+2024-09-04 16:36:04,186 - INFO -  * Debugger PIN: 545-599-218
+2024-09-04 16:36:11,114 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.72.142:5000
+2024-09-04 16:36:11,114 - INFO - [33mPress CTRL+C to quit[0m
+2024-09-04 16:36:11,128 - INFO -  * Restarting with stat
+2024-09-04 16:36:11,596 - WARNING -  * Debugger is active!
+2024-09-04 16:36:11,613 - INFO -  * Debugger PIN: 545-599-218
+2024-09-04 16:36:36,733 - INFO - Authenticated API key: 27f22b8b6eef9508133b82e34f3ca60d680b3152a2c5c9fa35f69546aed3bb85
+2024-09-04 16:36:36,733 - INFO - Executing batch queries - API key: 27f22b8b6eef9508133b82e34f3ca60d680b3152a2c5c9fa35f69546aed3bb85
+2024-09-04 16:36:37,146 - INFO - Executing query: SELECT * FROM GL_MASTER_MC - API key: 27f22b8b6eef9508133b82e34f3ca60d680b3152a2c5c9fa35f69546aed3bb85
+2024-09-04 16:36:37,334 - INFO - Executing query: SELECT * FROM GL_MASTER_COST_CENTERS_MC - API key: 27f22b8b6eef9508133b82e34f3ca60d680b3152a2c5c9fa35f69546aed3bb85
+2024-09-04 16:36:37,449 - INFO - Batch queries executed successfully - API key: 27f22b8b6eef9508133b82e34f3ca60d680b3152a2c5c9fa35f69546aed3bb85
+2024-09-04 16:36:37,471 - INFO - 192.168.72.142 - - [04/Sep/2024 16:36:37] "POST /query HTTP/1.1" 200 -

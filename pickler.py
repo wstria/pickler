@@ -1,15 +1,42 @@
-import pyodbc
-from flask import Flask, jsonify, request
-import sys
+import aioodbc
+import asyncio
+import pyodbc  # Import pyodbc for error handling
+from flask import Flask, request, Response
 import os
 from dotenv import load_dotenv
+import csv
+from io import StringIO
+import logging
 
+# Load environment variables
 load_dotenv()
+
+# Set up logging to file and console
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("api_log.log"),  # Log to a file
+        logging.StreamHandler()  # Log to console
+    ]
+)
 
 app = Flask(__name__)
 
-# Set up the ODBC connection
-def get_connection():
+# Load the API keys as a list from the .env file
+API_KEYS = os.getenv("API_KEYS").split(',')
+
+# Authentication function to check if the provided API key is valid
+def authenticate(request):
+    api_key = request.headers.get("x-api-key")  # Get the API key from the request headers
+    if api_key in API_KEYS:
+        logging.info(f"Authenticated API key: {api_key}")
+        return True
+    logging.warning(f"Unauthorized access attempt with API key: {api_key}")
+    return False
+
+# Set up an asynchronous ODBC connection
+async def get_async_connection(loop):
     connection_string = (
         f"DRIVER={os.getenv('DB_DRIVER')};"
         f"SERVER={os.getenv('DB_SERVER')};"
@@ -17,74 +44,79 @@ def get_connection():
         f"UID={os.getenv('DB_UID')};"
         f"PWD={os.getenv('DB_PWD')};"
     )
-    connection = pyodbc.connect(connection_string)
+    connection = await aioodbc.connect(dsn=connection_string, loop=loop)
     return connection
 
+# Function to execute a single SQL query asynchronously
+async def execute_query(cursor, sql_query):
+    await cursor.execute(sql_query)
+    return await cursor.fetchall()
 
-# Route to execute a query and return the results as JSON
-@app.route('/query', methods=['POST'])  # Changed to POST
-def query_data():
-    sql_query = request.json.get('sql')  # Get the SQL query from the request body
+# Route to handle multiple queries in one request
+@app.route('/query', methods=['POST'])
+async def query_data():
+    api_key = request.headers.get("x-api-key")
+    if not authenticate(request):
+        return "Unauthorized access", 403  # Return 403 if the API key is invalid
     
-    print(request.json)
-
-    if not sql_query:
-        return jsonify({"error": "No SQL query provided"}), 400  # Error Handler
+    queries = request.json.get('queries')  # Get the list of SQL queries from the request body
+    
+    if not queries:
+        logging.error(f"No SQL queries provided - API key: {api_key}")
+        return "No SQL queries provided", 400
+    
+    # Ensure queries are sent as a list of SQL strings
+    if not isinstance(queries, list):
+        return "Invalid format for SQL queries", 400
     
     try:
-        # Attempt Connection
-        connection = get_connection()
-        cursor = connection.cursor()
+        # Log the batch of queries being executed
+        logging.info(f"Executing batch queries - API key: {api_key}")
         
-        # Execute the query
-        cursor.execute(sql_query)  # Execute Query
-        rows = cursor.fetchall()  # Grab all Data
+        # Setup asyncio event loop for asynchronous execution
+        loop = asyncio.get_event_loop()
+        connection = await get_async_connection(loop)
+        cursor = await connection.cursor()
         
-        if not rows:
-            # No data returned
-            return jsonify({"message": "Query executed successfully, but no data was returned."}), 200
+        all_results = []
+        for sql_query in queries:
+            logging.info(f"Executing query: {sql_query} - API key: {api_key}")
+            
+            # Execute the raw SQL query
+            rows = await execute_query(cursor, sql_query)
+            if not rows:
+                logging.info(f"No data returned for query: {sql_query} - API key: {api_key}")
+            else:
+                columns = [column[0] for column in cursor.description]
+                all_results.append({
+                    "columns": columns,
+                    "rows": rows
+                })
         
-        # Get column names
-        columns = [column[0] for column in cursor.description]
+        # Create CSV output
+        output = StringIO()
+        writer = csv.writer(output)
         
-        # Convert rows to list of dictionaries
-        results = [dict(zip(columns, row)) for row in rows]
+        # Write the results of all queries to the output
+        for result in all_results:
+            writer.writerow(result["columns"])  # Write the header (column names)
+            writer.writerows(result["rows"])    # Write the rows of data
         
-        # Close the connection
-        cursor.close()
-        connection.close()
+        await cursor.close()
+        await connection.close()
         
-        # Return results as JSON for easier formatting
-        return jsonify(results)
+        logging.info(f"Batch queries executed successfully - API key: {api_key}")
+        
+        # Return the CSV content with the proper response headers
+        return Response(output.getvalue(), mimetype='text/csv')
     
-    except pyodbc.Error as e:
-        # Handle syntax errors in the SQL query
-        return jsonify({"error": "SQL syntax error or execution error.", "details": str(e)}), 400
+    except pyodbc.Error as e:  # Changed to pyodbc.Error
+        logging.error(f"SQL syntax error or execution error: {str(e)} - API key: {api_key}")
+        return f"SQL syntax error or execution error: {str(e)}", 400
     
     except Exception as e:
-        # Handle any other unexpected errors
-        return jsonify({"error": "An unexpected error occurred.", "details": str(e)}), 500
+        logging.error(f"An unexpected error occurred: {str(e)} - API key: {api_key}")
+        return f"An unexpected error occurred: {str(e)}", 500
 
-if __name__ == '__main__':  # Main Function
-    if len(sys.argv) > 1:
-        sql_query = ' '.join(sys.argv[1:])
-        
-        try:
-            connection = get_connection()
-            cursor = connection.cursor()
-            
-            cursor.execute(sql_query)
-            rows = cursor.fetchall()
-            
-            columns = [column[0] for column in cursor.description]
-            for row in rows:
-                result = dict(zip(columns, row))
-                print(result)
-            
-            cursor.close()
-            connection.close()
-        
-        except Exception as e:
-            print(f"Error: {str(e)}")
-    else:
-        app.run(debug=True, host='0.0.0.0', port=5000)
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5000)
